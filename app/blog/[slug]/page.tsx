@@ -1,0 +1,79 @@
+import { readFileSync, existsSync } from "fs";
+import { join } from "path";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { notFound } from "next/navigation";
+
+function parseFrontmatter(content: string) {
+  const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  if (!match) return { meta: {} as Record<string, string>, body: content };
+  const meta: Record<string, string> = {};
+  match[1].split("\n").forEach((line) => {
+    const [key, ...val] = line.split(": ");
+    if (key) meta[key.trim()] = val.join(": ").trim().replace(/^"|"$/g, "");
+  });
+  return { meta, body: match[2] };
+}
+
+function mdToHtml(md: string): string {
+  return md
+    .replace(/^## (.+)$/gm, '<h2 style="font-size:1.4rem;font-weight:800;color:var(--fg);margin:48px 0 16px;letter-spacing:-0.025em">$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3 style="font-size:1.15rem;font-weight:700;color:var(--fg);margin:36px 0 12px;letter-spacing:-0.02em">$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--fg);font-weight:600">$1</strong>')
+    .replace(/^- (.+)$/gm, '<li style="color:var(--muted);font-size:15px;line-height:1.75;margin-left:20px;list-style:disc">$1</li>')
+    .replace(/(<li[^>]*>[\s\S]*?<\/li>)/g, '<ul style="margin-bottom:24px">$1</ul>')
+    .replace(/^(?!<[h|l|u])(.+)$/gm, (line) => {
+      if (!line.trim()) return "";
+      if (line.startsWith("<")) return line;
+      return `<p style="color:var(--muted);font-size:15px;line-height:1.8;margin-bottom:20px">${line}</p>`;
+    });
+}
+
+export default function BlogPost({ params }: { params: { slug: string } }) {
+  const filePath = join(process.cwd(), "content/blog", `${params.slug}.mdx`);
+  if (!existsSync(filePath)) notFound();
+
+  const raw = readFileSync(filePath, "utf-8");
+  const { meta, body } = parseFrontmatter(raw);
+  const html = mdToHtml(body);
+
+  return (
+    <>
+      <Navbar />
+      <main style={{ minHeight: "100vh", paddingTop: 120, paddingBottom: 120, paddingLeft: 32, paddingRight: 32 }}>
+        <div style={{ maxWidth: 720, margin: "0 auto" }}>
+
+          <Link href="/blog" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, color: "var(--muted)", textDecoration: "none", marginBottom: 48 }}>
+            <ArrowLeft size={14} /> Back to Blog
+          </Link>
+
+          <header style={{ marginBottom: 56, paddingBottom: 40, borderBottom: "1px solid var(--border)" }}>
+            <div style={{ display: "flex", gap: 16, marginBottom: 20, alignItems: "center", flexWrap: "wrap" }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--blue)", letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                {meta.category}
+              </span>
+              <span style={{ fontSize: 11, color: "var(--subtle)" }}>
+                {meta.date} · {meta.readTime}
+              </span>
+            </div>
+            <h1 style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 900, letterSpacing: "-0.04em", color: "var(--fg)", lineHeight: 1.1, marginBottom: 16 }}>
+              {meta.title}
+            </h1>
+            <p style={{ fontSize: 13, color: "var(--subtle)" }}>By {meta.author}</p>
+          </header>
+
+          <div dangerouslySetInnerHTML={{ __html: html }} />
+
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}
+
+export async function generateStaticParams() {
+  const slugs = ["stellar-tokenization-2025", "scaffold-stellar-developer-toolkit", "defi-xrpl-compliance-liquidity"];
+  return slugs.map((slug) => ({ slug }));
+}
