@@ -16,8 +16,33 @@ const spectral = Spectral({
 });
 
 export const metadata: Metadata = {
-  title: "The Aha Company — Blockchain Solutions Built to Last",
-  description: "The Aha Company bridges institutions and startups with blockchain. From developer tooling to tokenization and DeFi, we build trusted, compliance-ready solutions that scale across Stellar, XRPL, Ethereum, Cosmos & more.",
+  title: {
+    default: "The Aha Company — Blockchain Solutions Built to Last",
+    template: "%s — The Aha Company",
+  },
+  description: "The Aha Company bridges institutions and startups with blockchain. Developer tooling, tokenization, and DeFi — compliance-ready solutions across Stellar, XRPL, Ethereum & Cosmos.",
+  metadataBase: new URL("https://theaha.co"),
+  openGraph: {
+    siteName: "The Aha Company",
+    type: "website",
+    locale: "en_US",
+    url: "https://theaha.co",
+    title: "The Aha Company — Blockchain Solutions Built to Last",
+    description: "We bridge institutions and startups with blockchain — developer tooling, tokenization, and DeFi. Compliance-ready solutions across Stellar, XRPL, Ethereum & Cosmos.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Aha Company — Blockchain Solutions Built to Last",
+    description: "Blockchain solutions for institutions and startups — Stellar, XRPL, Ethereum & Cosmos.",
+  },
+  alternates: {
+    canonical: "https://theaha.co",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-snippet": -1, "max-image-preview": "large" },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

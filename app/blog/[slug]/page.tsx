@@ -1,5 +1,6 @@
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
+import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
@@ -31,16 +32,69 @@ function mdToHtml(md: string): string {
     });
 }
 
-export default function BlogPost({ params }: { params: { slug: string } }) {
-  const filePath = join(process.cwd(), "content/blog", `${params.slug}.mdx`);
-  if (!existsSync(filePath)) notFound();
-
+function getPost(slug: string) {
+  const filePath = join(process.cwd(), "content/blog", `${slug}.mdx`);
+  if (!existsSync(filePath)) return null;
   const raw = readFileSync(filePath, "utf-8");
-  const { meta, body } = parseFrontmatter(raw);
+  return parseFrontmatter(raw);
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const post = getPost(params.slug);
+  if (!post) return {};
+  const { meta } = post;
+  const title = `${meta.title} — The Aha Company`;
+  const description = meta.excerpt || meta.title;
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      publishedTime: meta.date,
+      authors: [meta.author],
+      url: `https://theaha.co/blog/${params.slug}`,
+      siteName: "The Aha Company",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+    alternates: {
+      canonical: `https://theaha.co/blog/${params.slug}`,
+    },
+  };
+}
+
+export default function BlogPost({ params }: { params: { slug: string } }) {
+  const post = getPost(params.slug);
+  if (!post) notFound();
+  const { meta, body } = post;
   const html = mdToHtml(body);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: meta.title,
+    description: meta.excerpt || meta.title,
+    datePublished: meta.date,
+    author: { "@type": "Person", name: meta.author },
+    publisher: {
+      "@type": "Organization",
+      name: "The Aha Company",
+      url: "https://theaha.co",
+    },
+    url: `https://theaha.co/blog/${params.slug}`,
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <main style={{ minHeight: "100vh", paddingTop: 120, paddingBottom: 120, paddingLeft: 32, paddingRight: 32 }}>
         <div style={{ maxWidth: 720, margin: "0 auto" }}>
