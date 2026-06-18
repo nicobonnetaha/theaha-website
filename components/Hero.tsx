@@ -24,11 +24,11 @@ export default function Hero() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-            style={{ fontSize: "clamp(3.8rem, 7vw, 7rem)", fontWeight: 700, lineHeight: 1.02, letterSpacing: "-0.03em", color: "var(--fg)", marginBottom: 32, fontFamily: "var(--font-spectral), Georgia, serif" }}
+            style={{ fontSize: "clamp(3.8rem, 7vw, 7rem)", fontWeight: 900, lineHeight: 1.02, letterSpacing: "-0.04em", color: "var(--fg)", marginBottom: 32, fontFamily: "var(--font-spectral), Georgia, serif" }}
           >
             Blockchain<br />
             Solutions<br />
-            <span style={{ color: "var(--accent)", fontFamily: "var(--font-space), sans-serif", fontWeight: 900, letterSpacing: "-0.04em" }}>Built to Last</span>
+            <span style={{ color: "var(--accent)", fontFamily: "var(--font-space), sans-serif" }}>Built to Last</span>
           </motion.h1>
 
           <motion.p
