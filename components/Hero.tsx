@@ -28,7 +28,7 @@ export default function Hero() {
           >
             Blockchain<br />
             Solutions<br />
-            <span style={{ color: "var(--accent)" }}>Built to Last</span>
+            <span style={{ color: "var(--accent)", fontFamily: "var(--font-space), sans-serif", fontWeight: 900, letterSpacing: "-0.04em" }}>Built to Last</span>
           </motion.h1>
 
           <motion.p
