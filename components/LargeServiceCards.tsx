@@ -7,7 +7,7 @@ const cards = [
   {
     num: "01",
     title: "Smart Contract Development",
-    desc: "We're expert Soroban smart contract developers with an elite team of blockchain engineers. From DeFi protocols to tokenization infrastructure — we ship production-grade contracts.",
+    desc: "We build robust, production-ready smart contracts for some of the biggest financial institutions on Stellar.",
     image: "/images/SmartContractDeveloppment.png",
     bg: "#F4D5FF",
     fg: "#490063",
@@ -16,7 +16,7 @@ const cards = [
   {
     num: "02",
     title: "Smart Contract Tooling",
-    desc: "We provide you with a full set of custom tools — SDKs, scaffolding frameworks, and developer libraries — allowing you to focus on the big picture while we handle the plumbing.",
+    desc: "We pioneer standard-redefining tools at all levels of the Stellar software stack, making it easier to build, test, and ship dapps.",
     image: "/images/SmartContractTooling.png",
     bg: "#D1E3FF",
     fg: "#1A3B60",
@@ -25,7 +25,7 @@ const cards = [
   {
     num: "03",
     title: "Holistic Developer Experience Optimization",
-    desc: "We optimize every touchpoint of the developer experience, from seamless onboarding and deep documentation to feedback loops and community tooling.",
+    desc: "From world-class pedagogy to the deepest nuts & bolts of your stack, we help developers find the spark, the a-ha, the joy in your DevX, because better developer experience means better adoption.",
     image: "/images/HolisticDeveloperExperienceOptimization.png",
     bg: "#F1E6E7",
     fg: "#534747",

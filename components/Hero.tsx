@@ -2,13 +2,58 @@
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
-// colour tokens matching the live site's editor theme
-const KW  = "#c084fc"; // keywords: use, const, impl, pub fn, #[…]
-const MOD = "#4ade80"; // modules / identifiers
-const CMT = "#6b7280"; // comments ///
-const TXT = "#e2e8f0"; // plain text
-const PUN = "#94a3b8"; // punctuation { } ( ) ; :
-const STR = "#fbbf24"; // macro calls / special
+const CX = 200, CY = 200, MAX_R = 215;
+
+function polar(angleDeg: number, r: number) {
+  const a = (angleDeg - 90) * Math.PI / 180;
+  return { cx: +(CX + r * Math.cos(a)).toFixed(1), cy: +(CY + r * Math.sin(a)).toFixed(1) };
+}
+
+function distC(cx: number, cy: number) { return Math.hypot(cx - CX, cy - CY); }
+
+function nodeOp(cx: number, cy: number) {
+  return +Math.max(0.04, Math.pow(Math.max(0, 1 - distC(cx, cy) / MAX_R), 0.85)).toFixed(3);
+}
+
+function edgeOp(ax: number, ay: number, bx: number, by: number, active = false) {
+  const avg = (distC(ax, ay) + distC(bx, by)) / 2;
+  const base = Math.pow(Math.max(0, 1 - avg / MAX_R), 1.5);
+  return +Math.max(0.015, base * (active ? 0.7 : 0.38)).toFixed(3);
+}
+
+const CENTER = { id: 0, cx: CX, cy: CY, r: 7 };
+const L1 = [0,60,120,180,240,300].map((a, i) => ({ id: i+1, ...polar(a, 75), r: 5 }));
+const L2 = [30,90,150,210,270,330].map((a, i) => ({ id: i+7, ...polar(a, 138), r: 3.5 }));
+const L3 = [0,30,60,90,120,150,180,210,240,270,300,330].map((a, i) => ({ id: i+13, ...polar(a, 200), r: 2.5 }));
+
+const NODES = [CENTER, ...L1, ...L2, ...L3];
+
+type Node = typeof NODES[0];
+type Edge = { a: Node; b: Node; active: boolean };
+
+function mkEdge(aid: number, bid: number, active = false): Edge {
+  return { a: NODES[aid], b: NODES[bid], active };
+}
+
+const EDGES: Edge[] = [
+  // Center → L1 (animated)
+  ...L1.map(n => mkEdge(0, n.id, true)),
+  // L1 ring
+  ...L1.map((n, i) => mkEdge(n.id, L1[(i+1)%6].id)),
+  // L1 → L2
+  ...L1.flatMap((n, i) => [mkEdge(n.id, L2[i].id), mkEdge(n.id, L2[(i+5)%6].id)]),
+  // L2 ring
+  ...L2.map((n, i) => mkEdge(n.id, L2[(i+1)%6].id)),
+  // L2 → L3
+  ...L2.flatMap((n, i) => [
+    mkEdge(n.id, L3[i*2].id),
+    mkEdge(n.id, L3[(i*2+1)%12].id),
+    mkEdge(n.id, L3[(i*2+2)%12].id),
+  ]),
+  // L3 ring (sparse)
+  ...L3.filter((_, i) => i%2===0).map((_, i) => mkEdge(L3[i*2].id, L3[(i*2+1)%12].id)),
+];
+
 
 export default function Hero() {
   return (
@@ -47,7 +92,7 @@ export default function Hero() {
               transition={{ duration: 0.45, delay: 0.16, ease: "easeOut" }}
               style={{ fontSize: 17, color: "var(--muted)", lineHeight: 1.65, maxWidth: 480, marginBottom: 48, fontWeight: 400 }}
             >
-              We bridge institutions and startups with blockchain — developer tooling, tokenization, and DeFi. Compliance-ready solutions that scale across Stellar, XRPL, Ethereum & Cosmos.
+              The Aha Company unlocks next-generation financial infrastructure for top-tier banks & institutions. From stablecoin rails to tokenized funds, we design and deploy the systems that make it real.
             </motion.p>
 
             <motion.div
@@ -75,98 +120,49 @@ export default function Hero() {
             </motion.div>
           </div>
 
-          {/* Right: code editor card */}
+          {/* Right: radial network graph */}
           <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            style={{ display: "flex", justifyContent: "center", position: "relative" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.2, delay: 0.4 }}
+            style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
           >
-            {/* Editor window */}
-            <div style={{
-              background: "#1c1e26",
-              borderRadius: 16,
-              border: "1px solid rgba(255,255,255,0.07)",
-              padding: "0 0 24px",
-              width: "100%",
-              maxWidth: 500,
-              boxShadow: "0 32px 80px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.14)",
-              overflow: "hidden",
-            }}>
-              {/* Title bar */}
-              <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.05)", background: "#161720" }}>
-                {["#6272a4","#50fa7b","#bd93f9"].map(c => (
-                  <span key={c} style={{ width: 11, height: 11, borderRadius: "50%", background: c, display: "block" }} />
-                ))}
-                <span style={{ marginLeft: 10, fontSize: 11, color: "#6272a4", fontFamily: "monospace", letterSpacing: "0.04em" }}>
-                  open_infrastructure.rs
-                </span>
-              </div>
+            <svg viewBox="0 0 400 400" width="100%" style={{ maxWidth: 460 }} aria-hidden>
 
-              {/* Code */}
-              <div style={{ padding: "20px 24px 0", fontFamily: "'JetBrains Mono', 'Fira Code', monospace", fontSize: 12.5, lineHeight: 1.9 }}>
-                {[
-                  <><span style={{color:KW}}>use</span> <span style={{color:MOD}}>admin_sep</span><span style={{color:PUN}}>::{"{"}</span><span style={{color:MOD}}>Administratable</span><span style={{color:PUN}}>, </span><span style={{color:MOD}}>Upgradable</span><span style={{color:PUN}}>{"}"}</span><span style={{color:PUN}}>;</span></>,
-                  <><span style={{color:KW}}>use</span> <span style={{color:MOD}}>stellar_registry</span><span style={{color:PUN}}>::</span><span style={{color:MOD}}>import_contract_client</span><span style={{color:PUN}}>;</span></>,
-                  <><span style={{color:KW}}>const</span> <span style={{color:TXT}}>XLM</span> <span style={{color:PUN}}>= </span><span style={{color:STR}}>import_contract_client!</span><span style={{color:PUN}}>(</span><span style={{color:MOD}}>xlm</span><span style={{color:PUN}}>);</span></>,
-                  <>&nbsp;</>,
-                  <><span style={{color:KW}}>{"#[contractimpl]"}</span></>,
-                  <><span style={{color:KW}}>impl</span> <span style={{color:MOD}}>OpenInfrastructure</span> <span style={{color:PUN}}>{"{"}</span></>,
-                  <>&nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:CMT}}>{"/// Composable, secure Smart Contract tooling"}</span></>,
-                  <>&nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:CMT}}>{"/// holistically considered"}</span></>,
-                  <>&nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:KW}}>pub fn</span> <span style={{color:MOD}}>get_started</span><span style={{color:PUN}}>(</span><span style={{color:TXT}}>env</span><span style={{color:PUN}}>: &amp;</span><span style={{color:MOD}}>Env</span><span style={{color:PUN}}>, </span><span style={{color:TXT}}>who</span><span style={{color:PUN}}>: </span><span style={{color:MOD}}>Address</span><span style={{color:PUN}}>) {"{"}</span></>,
-                  <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:MOD}}>Self</span><span style={{color:PUN}}>::</span><span style={{color:TXT}}>require_admin</span><span style={{color:PUN}}>(</span><span style={{color:TXT}}>env</span><span style={{color:PUN}}>);</span></>,
-                  <>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:MOD}}>XLM</span><span style={{color:PUN}}>::</span><span style={{color:TXT}}>transfer</span><span style={{color:PUN}}>(</span><span style={{color:MOD}}>Self</span><span style={{color:PUN}}>::</span><span style={{color:TXT}}>get_admin</span><span style={{color:PUN}}>(</span><span style={{color:TXT}}>env</span><span style={{color:PUN}}>),…</span></>,
-                  <>&nbsp;&nbsp;&nbsp;&nbsp;<span style={{color:PUN}}>{"}"}</span></>,
-                  <><span style={{color:PUN}}>{"}"}</span></>,
-                ].map((line, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.25, delay: 0.4 + i * 0.1, ease: "easeOut" }}
-                    style={{ whiteSpace: "pre", minHeight: "1.9em" }}
-                  >
-                    {line}
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* Quality badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 12, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.45, delay: 1.6, ease: [0.16, 1, 0.3, 1] }}
-              style={{
-                position: "absolute",
-                bottom: -16,
-                right: -12,
-                background: "var(--bg)",
-                borderRadius: 12,
-                border: "1px solid var(--border)",
-                padding: "14px 18px",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
-                minWidth: 200,
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                <span style={{ fontSize: 13, fontWeight: 600, fontStyle: "italic", color: "var(--fg)", fontFamily: "var(--font-spectral)" }}>Quality</span>
-                <span style={{ fontSize: 13, fontWeight: 800, color: "var(--fg)", letterSpacing: "0.05em" }}>HIGH</span>
-              </div>
-              <div style={{ height: 6, background: "var(--border)", borderRadius: 99, overflow: "hidden" }}>
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: "100%" }}
-                  transition={{ duration: 0.8, delay: 1.9, ease: [0.16, 1, 0.3, 1] }}
-                  style={{ height: "100%", background: "#4ade80", borderRadius: 99 }}
+              {/* Edges */}
+              {EDGES.map((edge, i) => (
+                <line
+                  key={i}
+                  x1={edge.a.cx} y1={edge.a.cy}
+                  x2={edge.b.cx} y2={edge.b.cy}
+                  stroke={edge.active ? "var(--accent)" : "var(--fg)"}
+                  strokeOpacity={edgeOp(edge.a.cx, edge.a.cy, edge.b.cx, edge.b.cy, edge.active)}
+                  strokeWidth={edge.active ? 1.2 : 0.8}
                 />
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
-                <span style={{ fontSize: 10, color: "var(--subtle)" }}>0 %</span>
-                <span style={{ fontSize: 10, color: "var(--subtle)" }}>100 %</span>
-              </div>
-            </motion.div>
+              ))}
+
+
+              {/* Nodes */}
+              {NODES.map((n, i) => {
+                const op = nodeOp(n.cx, n.cy);
+                const close = distC(n.cx, n.cy) < 85;
+                return (
+                  <g key={n.id}>
+                    {close && (
+                      <circle cx={n.cx} cy={n.cy} r={n.r + 5} fill="none" stroke="var(--accent)" strokeWidth="1">
+                        <animate attributeName="r" values={`${n.r+3};${n.r+11};${n.r+3}`} dur={`${3+i*0.3}s`} repeatCount="indefinite" />
+                        <animate attributeName="stroke-opacity" values={`${op*0.2};0;${op*0.2}`} dur={`${3+i*0.3}s`} repeatCount="indefinite" />
+                      </circle>
+                    )}
+                    <circle cx={n.cx} cy={n.cy} r={n.r} fill="var(--accent)" opacity={op}>
+                      {close && (
+                        <animate attributeName="r" values={`${n.r};${n.r*1.12};${n.r}`} dur={`${4+i*0.25}s`} begin={`${i*0.15}s`} repeatCount="indefinite" />
+                      )}
+                    </circle>
+                  </g>
+                );
+              })}
+            </svg>
           </motion.div>
 
         </div>

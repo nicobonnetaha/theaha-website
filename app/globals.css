@@ -13,6 +13,7 @@
   --grid-line: rgba(244,244,245,0.03);
   --card-bg: rgba(244,244,245,0.02);
   --testimonial-bg: rgba(244,244,245,0.015);
+  --illus-bg: #f0f0ee;
 }
 
 html[data-theme="light"] {
@@ -28,6 +29,7 @@ html[data-theme="light"] {
   --grid-line: rgba(10,10,11,0.04);
   --card-bg: rgba(10,10,11,0.02);
   --testimonial-bg: rgba(10,10,11,0.015);
+  --illus-bg: rgba(10,10,11,0.03);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }

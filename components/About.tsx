@@ -38,7 +38,7 @@ export default function About() {
             style={{ paddingTop: 8 }}
           >
             <p style={{ fontSize: 15, color: "var(--muted)", lineHeight: 1.75, marginBottom: 16 }}>
-              We help financial institutions and fintechs design and deploy compliant blockchain infrastructure — from tokenized fund rails to stablecoin issuance and smart contract systems.
+              We help financial institutions and fintechs design and deploy compliant blockchain infrastructure, from tokenized fund rails to stablecoin issuance and smart contract systems.
             </p>
             <p style={{ fontSize: 15, color: "var(--muted)", lineHeight: 1.75 }}>
               We implemented SG Forge&apos;s Euro stablecoin (EURCV) on Stellar, built tokenization infrastructure with Ripple and a Big Four consultancy, and continue to ship the developer tooling the ecosystem runs on.

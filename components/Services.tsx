@@ -7,7 +7,7 @@ const services = [
   {
     num: "01",
     title: "Developer Tooling",
-    desc: "SDKs, scaffolding frameworks, and open-source libraries. We've built Scaffold Stellar — the standard for Stellar smart contract development.",
+    desc: "SDKs, scaffolding frameworks, and open-source libraries. We've built Scaffold Stellar, the standard for Stellar smart contract development.",
     image: "/images/DevXisinourDNA.png",
     alt: "DevX is in our DNA",
   },

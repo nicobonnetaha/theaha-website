@@ -1,7 +1,7 @@
 const testimonials = [
   {
     quote: "Industry-leading developer experience",
-    body: "When we undertook the biggest update to Stellar since its inception — fully programmable smart contracts — we knew we needed to ship an industry-leading developer experience. We searched far and wide for capable teams to help us. We found one.",
+    body: "When we undertook the biggest update to Stellar since its inception, fully programmable smart contracts, we knew we needed to ship an industry-leading developer experience.\n\nWe searched far and wide for capable teams to help us. We found one. We've been glad to work with The Aha Company ever since.",
     author: "Tomer Weller",
     role: "Chief Product Officer",
     org: "Stellar Development Foundation",
@@ -9,7 +9,7 @@ const testimonials = [
   },
   {
     quote: "True co-creators who bring ideas to life",
-    body: "Collaborating on Scaffold Stellar with the talented team they've built, I'm consistently impressed by their speed, capacity, and commitment to quality. For true co-creators who bring ideas to life, look no further than The Aha Company.",
+    body: "Since working alongside Chad and Willem, I've always appreciated that they fill critical gaps in the ecosystems they work in. More recently, collaborating on Scaffold Stellar with the talented team they've built, I'm consistently impressed by their speed, capacity, and commitment to quality. For true co-creators who bring ideas to life, look no further than The Aha Company.",
     author: "Jane Wang",
     role: "PM, Developer Experience & RWA Tokenization",
     org: "Stellar Development Foundation",
@@ -35,9 +35,13 @@ export default function Testimonials() {
               <p style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.35rem)", fontWeight: 600, color: "var(--fg)", lineHeight: 1.45, letterSpacing: "-0.015em" }}>
                 &ldquo;{t.quote}&rdquo;
               </p>
-              <p style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.75, flex: 1 }}>
-                {t.body}
-              </p>
+              <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
+                {t.body.split("\n\n").map((para, i) => (
+                  <p key={i} style={{ fontSize: 14, color: "var(--muted)", lineHeight: 1.75 }}>
+                    {para}
+                  </p>
+                ))}
+              </div>
               <div style={{ borderTop: "1px solid var(--border)", paddingTop: 20, display: "flex", alignItems: "center", gap: 14 }}>
                 <img
                   src={t.photo}
