@@ -1,4 +1,7 @@
+"use client";
 import { ArrowUpRight } from "lucide-react";
+import { motion, useInView } from "framer-motion";
+import { useRef } from "react";
 
 const cases = [
   {
@@ -25,21 +28,33 @@ const cases = [
 ];
 
 export default function CaseStudies() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-80px" });
+
   return (
-    <section id="work" style={{ padding: "120px 32px", borderTop: "1px solid var(--border)" }}>
+    <section id="work" ref={ref} style={{ padding: "120px 32px", borderTop: "1px solid var(--border)" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto" }}>
 
-        <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 64, flexWrap: "wrap", gap: 16 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+          style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 64, flexWrap: "wrap", gap: 16 }}
+        >
           <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 900, letterSpacing: "-0.03em", color: "var(--fg)" }}>
             From vision to reality
           </h2>
           <span className="tag">Case Studies</span>
-        </div>
+        </motion.div>
 
         <div style={{ display: "flex", flexDirection: "column" }}>
           {cases.map((c, i) => (
-            <div
+            <motion.div
               key={c.num}
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: i * 0.12 }}
+              whileHover={{ x: 6 }}
               className="hover-dim"
               style={{
                 display: "grid",
@@ -49,6 +64,8 @@ export default function CaseStudies() {
                 borderTop: i === 0 ? "1px solid var(--border)" : undefined,
                 borderBottom: "1px solid var(--border)",
                 alignItems: "center",
+                cursor: "pointer",
+                transition: "opacity 0.15s",
               }}
             >
               <span style={{ fontSize: 12, fontWeight: 700, color: "var(--accent)", letterSpacing: "0.1em" }}>
@@ -69,7 +86,7 @@ export default function CaseStudies() {
                 <span style={{ fontSize: 12, color: "var(--subtle)" }}>{c.year}</span>
                 <ArrowUpRight size={16} style={{ color: "var(--muted)" }} />
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

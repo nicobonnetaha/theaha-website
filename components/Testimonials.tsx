@@ -5,8 +5,7 @@ const testimonials = [
     author: "Tomer Weller",
     role: "Chief Product Officer",
     org: "Stellar Development Foundation",
-    initials: "TW",
-    color: "#1a56db",
+    photo: "/images/tomer.jpg",
   },
   {
     quote: "True co-creators who bring ideas to life",
@@ -14,8 +13,7 @@ const testimonials = [
     author: "Jane Wang",
     role: "PM, Developer Experience & RWA Tokenization",
     org: "Stellar Development Foundation",
-    initials: "JW",
-    color: "#0e9f6e",
+    photo: "/images/jane.jpg",
   },
 ];
 
@@ -42,11 +40,11 @@ export default function Testimonials() {
               </p>
               <div style={{ borderTop: "1px solid var(--border)", paddingTop: 20, display: "flex", alignItems: "center", gap: 14 }}>
                 <img
-                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(t.author)}&background=${t.color.replace("#", "")}&color=fff&size=80&bold=true&font-size=0.4`}
+                  src={t.photo}
                   alt={t.author}
                   width={44}
                   height={44}
-                  style={{ borderRadius: "50%", flexShrink: 0 }}
+                  style={{ borderRadius: "50%", flexShrink: 0, objectFit: "cover", width: 44, height: 44 }}
                 />
                 <div>
                   <p style={{ fontSize: 14, fontWeight: 600, color: "var(--fg)" }}>{t.author}</p>
