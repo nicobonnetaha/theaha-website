@@ -111,3 +111,15 @@ body {
 
 .hover-color { transition: color 0.15s; }
 .hover-color:hover { color: var(--fg) !important; }
+
+/* ── Ticker ── */
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker 28s linear infinite;
+}
+.ticker-track:hover { animation-play-state: paused; }

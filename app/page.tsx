@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import LogoTicker from "@/components/LogoTicker";
 import Services from "@/components/Services";
 import LargeServiceCards from "@/components/LargeServiceCards";
 import About from "@/components/About";
@@ -15,6 +16,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <LogoTicker />
         <Services />
         <LargeServiceCards />
         <About />
