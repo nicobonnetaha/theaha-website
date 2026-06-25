@@ -11,7 +11,7 @@ const cases = [
     title: "Scaffold Stellar",
     desc: "Open-source scaffolding template for Soroban smart contracts, cutting project setup from days to minutes. The go-to starting point for Stellar developers worldwide.",
     year: "2024",
-    href: "https://github.com/theahaco/soroban-init-template",
+    href: "/work/scaffold-stellar",
   },
   {
     num: "02",
@@ -19,7 +19,7 @@ const cases = [
     title: "Equitx",
     desc: "Equity tokenization infrastructure built on Stellar, bringing real-world asset issuance on-chain with compliance at the protocol layer.",
     year: "2024",
-    href: "https://github.com/theahaco/equitxdev",
+    href: "/work/equitx",
   },
   {
     num: "03",
@@ -27,7 +27,7 @@ const cases = [
     title: "Authline",
     desc: "Stellar asset and trustline management dApp, enabling institutions to manage tokenized assets, issuance rights, and account authorization at scale.",
     year: "2025",
-    href: "https://github.com/theahaco/authline",
+    href: "/work/authline",
   },
 ];
 
@@ -117,8 +117,6 @@ export default function WorkAndBlog() {
               >
                 <Link
                   href={c.href}
-                  target={c.href.startsWith("http") ? "_blank" : undefined}
-                  rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
                   style={{
                     display: "grid",
                     gridTemplateColumns: "80px 1fr 120px",

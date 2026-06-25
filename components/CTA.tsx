@@ -41,8 +41,7 @@ export default function CTA() {
           transition={{ duration: 0.55, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", fontWeight: 900, letterSpacing: "-0.04em", color: "var(--fg)", lineHeight: 1.05, marginBottom: 24 }}
         >
-          <span style={{ fontFamily: "var(--font-spectral), Georgia, serif" }}>Ready to build</span><br />
-          something lasting?
+          Ready to build<br />something lasting?
         </motion.h2>
 
         <motion.p
